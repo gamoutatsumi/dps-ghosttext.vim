@@ -1,6 +1,6 @@
-import { createApp, createRouter, Router, setLevel, Loglevel } from "./deps/servest.ts";
+import { createApp, createRouter, Router, setLevel, Loglevel } from "./vendor/https/deno.land/x/servest/mod.ts";
 
-import { Vim } from "./deps/denops_std.ts"
+import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
 import ghost from "./ghost.ts";
 

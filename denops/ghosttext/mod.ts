@@ -1,5 +1,5 @@
-import { start } from "./deps/denops_std.ts";
-import { WebSocket } from "./deps/ws.ts";
+import { start } from "./vendor/https/deno.land/x/denops_std/mod.ts";
+import { WebSocket } from "./vendor/https/deno.land/std/ws/mod.ts";
 import Server  from "./server.ts";
 
 interface BufHandlerMap {

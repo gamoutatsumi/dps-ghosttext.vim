@@ -1,6 +1,5 @@
 import { WebSocket, isWebSocketCloseEvent } from "./vendor/https/deno.land/std/ws/mod.ts";
-import * as denops_std from "./vendor/https/deno.land/denops_std/mod.ts";
-import { Vim } from denops_std
+import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
 import BufHandlerMap from "./mod.ts";
 
