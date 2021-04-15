@@ -1,85 +1,80 @@
-import { listenAndServe, Response } from "https://deno.land/x/std/http/mod.ts";
-import { acceptWebSocket, acceptable, WebSocket } from "https://deno.land/x/std/ws/mod.ts";
-import serverLog from "./logger.ts";
+import { createApp, createRouter, Router, setLevel, Loglevel } from "./deps/servest.ts";
 
-import { Vim } from "https://deno.land/x/denops_std@v0.3/mod.ts";
+import { Vim } from "./deps/denops_std.ts"
 
 import ghost from "./ghost.ts";
+
+import BufHandlerMap from "./mod.ts"
 
 const version = "0.0.0"
 
 class Server {
-  port: number;
   vim: Vim
-  constructor(vim: Vim, port?: number) { 
-    this.port = port ?? 4001;
-    this.vim = vim
+  addr: Deno.ListenOptions
+  bufHandlerMaps: BufHandlerMap[]
+  constructor(vim: Vim, bufHandlerMaps: BufHandlerMap[], port?: number) { 
+    this.addr = {
+      port: port ?? 4001,
+      hostname: "127.0.0.1"
+    }
+    this.vim = vim;
+    this.bufHandlerMaps = bufHandlerMaps;
   }
-  run() { runServer(this.vim, this.port); }
+  run() { runServer(this.vim, this.addr, this.bufHandlerMaps); }
 }
 
-const runServer = async (vim: Vim, port: number): Promise<void> => {
-  listenAndServe({ hostname: "127.0.0.1", port: port }, (req) => {
-    if (req.method === "GET" && req.url === "/") {
-      const json = JSON.stringify({
-        WebSocketPort: port,
-        ProtocolVersion: 1,
-      })
-      const response: Response = {
+const runServer = async (vim: Vim, addr: Deno.ListenOptions, bufHandlerMaps: BufHandlerMap[]): Promise<void> => {
+  setLevel(Loglevel.INFO);
+  const app = createApp({
+  });
+  const IndexRoutes = (): Router => {
+    const router = createRouter();
+    router.handle("/", async (req) => {
+      await req.respond({
         status: 200,
-        body: json,
+        body: JSON.stringify({
+          WebSocketPort: addr.port,
+          ProtocolVersion: 1,
+        }),
         headers: new Headers({
           "content-type": "application/json",
         }),
-      }
-      req.respond(
-        response
-      ).then(() => {
-        serverLog(req, response);
       });
-      if (acceptable(req)) {
-        acceptWebSocket({
-          conn: req.conn,
-          bufReader: req.r,
-          bufWriter: req.w,
-          headers: req.headers,
-        }).then(async (ws: WebSocket) => {
-          await ghost(vim, ws);
-        });
-      }
-    } else if (req.method === "GET" && req.url === "/version") {
-      const response: Response = {
+    });
+    router.handle("/version", async (req) => {
+      await req.respond({
         status: 200,
         body: version,
-      }
-      req.respond(
-        response
-      ).then(() => {
-        serverLog(req, response);
+        headers: new Headers({
+          "content-type": "text/plain",
+        }),
       });
-    } else if (req.method === "GET" && req.url === "/exit") {
-      const response: Response = {
+    });
+    router.handle("/exit", async (req) => {
+      await req.respond({
         status: 200,
         body: "exiting...",
-      };
-      req.respond(
-        response
-      ).then(() => {
-        serverLog(req, response);
-        Deno.exit();
+        headers: new Headers({
+          "content-type": "text/plain",
+        }),
       });
-    } else if (req.method === "GET" && req.url === "/is_ghost_binary") {
-      const response: Response = {
+    });
+    router.handle("/is_ghost_binary", async (req) => {
+      await req.respond({
         status: 200,
         body: "True",
-      }
-      req.respond(
-        response
-      ).then(() => {
-        serverLog(req, response)
-      })
-    }
+        headers: new Headers({
+          "content-type": "text/plain",
+        }),
+      });
+    });
+    return router;
+  }
+  app.route("/", IndexRoutes());
+  app.ws("/", async (sock) => {
+    ghost(vim, sock, bufHandlerMaps);
   });
+  app.listen(addr);
 }
 
 export default Server;
