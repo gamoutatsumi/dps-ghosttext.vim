@@ -30,7 +30,6 @@ const ghost = async (
   const ftmap: FileTypeMap = await vim.g.get(
     "dps#ghosttext#ftmap",
   ) as FileTypeMap;
-  console.log(ftmap);
   for await (const event of ws) {
     if (isWebSocketCloseEvent(event) || (typeof event !== "string")) {
       bufHandlerMaps = bufHandlerMaps.filter((handler) =>
@@ -44,7 +43,6 @@ const ghost = async (
       break;
     }
     const data = JSON.parse(event) as GhostTextEvent;
-    console.log(data);
     await vim.cmd(`edit ${data.url}`);
     await vim.call("setline", 1, data.text.split("\n"));
     await vim.execute(`
