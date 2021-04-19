@@ -48,7 +48,7 @@ main(async ({ vim }) => {
         }
       } else {
         await vim.g.set("dps_ghosttext_ftmap", {
-          "github.com": "markdown"
+          "github.com": "markdown",
         });
       }
     },

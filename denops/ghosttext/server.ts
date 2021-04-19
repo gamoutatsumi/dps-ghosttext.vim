@@ -8,7 +8,7 @@ import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
 import { ghost } from "./ghost.ts";
 
-import { BufHandlerMap }from "./mod.ts";
+import { BufHandlerMap } from "./mod.ts";
 
 import { rand } from "./rand.ts";
 
