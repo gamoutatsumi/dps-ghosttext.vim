@@ -5,7 +5,8 @@ import {
 } from "./vendor/https/deno.land/std/ws/mod.ts";
 import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
-import BufHandlerMap from "./mod.ts";
+import { FileTypeMap, BufHandlerMap } from "./mod.ts";
+
 
 type GhostTextEvent = {
   title: string;
@@ -18,11 +19,7 @@ type GhostTextEvent = {
   }];
 } & WebSocketEvent;
 
-type FileTypeMap = {
-  [key in string]: string;
-};
-
-const ghost = async (
+export const ghost = async (
   vim: Vim,
   ws: WebSocket,
   bufHandlerMaps: BufHandlerMap[],
@@ -61,5 +58,3 @@ const ghost = async (
     `);
   }
 };
-
-export default ghost;

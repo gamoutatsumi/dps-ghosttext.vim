@@ -6,15 +6,15 @@ import {
 
 import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
-import ghost from "./ghost.ts";
+import { ghost } from "./ghost.ts";
 
-import BufHandlerMap from "./mod.ts";
+import { BufHandlerMap }from "./mod.ts";
 
-import rand from "./rand.ts";
+import { rand } from "./rand.ts";
 
 const version = "0.0.0";
 
-class Server {
+export class Server {
   vim: Vim;
   addr: Deno.ListenOptions;
   bufHandlerMaps: BufHandlerMap[];
@@ -96,4 +96,3 @@ const runWsServer = (
     port: port,
   });
 };
-export default Server;

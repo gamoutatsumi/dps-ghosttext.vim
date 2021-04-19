@@ -1,13 +1,17 @@
 import { start } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 import { WebSocket } from "./vendor/https/deno.land/std/ws/mod.ts";
-import Server from "./server.ts";
+import { Server } from "./server.ts";
 
-interface BufHandlerMap {
+export interface BufHandlerMap {
   bufnr: number;
   socket: WebSocket;
 }
 
 const bufHandlerMaps: BufHandlerMap[] = [];
+
+export type FileTypeMap = {
+  [key in string]: string;
+};
 
 start(async (vim) => {
   vim.register({
@@ -38,9 +42,15 @@ start(async (vim) => {
       socket.send(JSON.stringify(data));
     },
     async set_variables(): Promise<void> {
-      await vim.g.set("dps_ghosttext_ftmap", {
-        "github.com": "markdown",
-      });
+      if (await vim.call("exists", "g:dps_ghosttext_ftmap") === 1) {
+        if (await vim.call("exists", `g:dps_ghosttext_ftmap["github"]`) === 0) {
+          await vim.g.set(`dps_ghosttext_ftmap["github.com"]`, "markdown");
+        }
+      } else {
+        await vim.g.set("dps_ghosttext_ftmap", {
+          "github.com": "markdown"
+        });
+      }
     },
   });
   await vim.execute(`
@@ -48,5 +58,3 @@ start(async (vim) => {
     call denops#notify("${vim.name}", "set_variables", [])
   `);
 });
-
-export default BufHandlerMap;
