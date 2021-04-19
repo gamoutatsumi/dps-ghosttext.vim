@@ -31,11 +31,11 @@ class Server {
   }
 }
 
-const runServer = async (
+const runServer = (
   vim: Vim,
   addr: Deno.ListenOptions,
   bufHandlerMaps: BufHandlerMap[],
-): Promise<void> => {
+): void => {
   setLevel(Loglevel.WARN);
   const app = createApp();
   app.handle("/", async (req) => {
@@ -82,11 +82,11 @@ const runServer = async (
   app.listen(addr);
 };
 
-const runWsServer = async (
+const runWsServer = (
   vim: Vim,
   port: number,
   bufHandlerMaps: BufHandlerMap[],
-): Promise<void> => {
+): void => {
   const wsApp = createApp();
   wsApp.ws("/", async (sock) => {
     await ghost(vim, sock, bufHandlerMaps);

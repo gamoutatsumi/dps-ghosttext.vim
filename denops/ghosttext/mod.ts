@@ -7,7 +7,7 @@ interface BufHandlerMap {
   socket: WebSocket;
 }
 
-let bufHandlerMaps: BufHandlerMap[] = [];
+const bufHandlerMaps: BufHandlerMap[] = [];
 
 start(async (vim) => {
   vim.register({
