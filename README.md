@@ -11,3 +11,7 @@ WIP: GhostText plugin for denops.vim
 `:GhostStart`
 
 ![demo](./image/screenshot.png)
+
+## LICENSE
+
+[MIT](./LICENSE)
