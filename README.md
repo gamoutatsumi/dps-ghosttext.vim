@@ -2,6 +2,10 @@
 
 WIP: GhostText plugin for denops.vim
 
+## Requirements
+
+- [denops.vim](https://github.com/vim-denops/denops.vim) is installed.
+
 ## Usage
 
 `:GhostStart`
