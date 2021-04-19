@@ -1,4 +1,4 @@
-import { start } from "./vendor/https/deno.land/x/denops_std/mod.ts";
+import { main } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 import { WebSocket } from "./vendor/https/deno.land/std/ws/mod.ts";
 import { Server } from "./server.ts";
 
@@ -13,7 +13,7 @@ export type FileTypeMap = {
   [key in string]: string;
 };
 
-start(async (vim) => {
+main(async ({ vim }) => {
   vim.register({
     async run(port: unknown): Promise<void> {
       if (typeof port !== "number" && port !== undefined) {
