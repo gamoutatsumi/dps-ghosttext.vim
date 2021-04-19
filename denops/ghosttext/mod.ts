@@ -38,7 +38,7 @@ start(async (vim) => {
       socket.send(JSON.stringify(data));
     },
     async set_variables(): Promise<void> {
-      await vim.g.set("dps#ghosttext#ftmap", {
+      await vim.g.set("dps_ghosttext_ftmap", {
         "github.com": "markdown",
       });
     },

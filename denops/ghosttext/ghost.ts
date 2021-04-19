@@ -28,7 +28,7 @@ const ghost = async (
   bufHandlerMaps: BufHandlerMap[],
 ): Promise<void> => {
   const ftmap: FileTypeMap = await vim.g.get(
-    "dps#ghosttext#ftmap",
+    "dps_ghosttext_ftmap",
   ) as FileTypeMap;
   for await (const event of ws) {
     if (isWebSocketCloseEvent(event) || (typeof event !== "string")) {
