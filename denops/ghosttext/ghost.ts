@@ -1,45 +1,57 @@
-import { WebSocket, isWebSocketCloseEvent } from "./vendor/https/deno.land/std/ws/mod.ts";
+import { WebSocket, isWebSocketCloseEvent, WebSocketEvent } from "./vendor/https/deno.land/std/ws/mod.ts";
 import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
 import BufHandlerMap from "./mod.ts";
 
+type GhostTextEvent = {
+  title: string,
+  text: string,
+  url: string,
+  syntax: string,
+  selections: [{
+    start: number,
+    end: number,
+  }],
+} & WebSocketEvent
+
+type FileTypeMap = {
+  [key in string]: string
+}
+
+
 const ghost = async (vim: Vim, ws: WebSocket, bufHandlerMaps: BufHandlerMap[]): Promise<void> => {
+  const ftmap: FileTypeMap = await vim.g.get("dps#ghosttext#ftmap") as FileTypeMap
+  console.log(ftmap)
   for await (const event of ws) {
-    if (isWebSocketCloseEvent(event)) {
+    if (isWebSocketCloseEvent(event) || (typeof event !== "string")) {
       bufHandlerMaps = bufHandlerMaps.filter((handler) => handler.socket !== ws);
+      await vim.execute(`
+        augroup dps_ghost
+        autocmd!
+        augroup END
+      `)
       break;
     }
-    const data = (typeof event === "string") ? JSON.parse(event).data : "";
-    await vim.cmd("tabbed title", {
-      title: data.title
-    });
+    const data = JSON.parse(event) as GhostTextEvent
+    console.log(data)
+    await vim.cmd(`edit ${data.url}`);
     await vim.call("setline", 1, data.text.split("\n"));
     await vim.execute(`
       setlocal buftype=nofile
       setlocal nobackup noswapfile
+      setlocal bufhidden=hide
+      setlocal ft=${ftmap[data.url]}
     `);
     const bufnr = await vim.call("bufnr", "%") as number;
     bufHandlerMaps.push({bufnr: bufnr, socket: ws});
+    await vim.execute(`
+      augroup dps_ghost
+      autocmd!
+      autocmd TextChanged,TextChangedP,TextChangedI <buffer> call denops#notify("${vim.name}", "push", [bufnr("%")])
+      augroup END
+    `)
   }
-  await vim.autocmd("dps_ghost", (helper) => {
-    helper.remove("*", "<buffer>");
-    helper.define(
-      ["TextChanged", "TextChangedI", "TextChangedP"],
-      "<buffer>",
-      `call denops#notify("${vim.name}", "push", [getline(1, "$"), ${ws}])`
-    );
-  });
-  const text = await vim.call("getline", 1, "$") as string[];
-  const pos = [await vim.call("line", "."), vim.call("col", ".")] 
-  ws.send(JSON.stringify({
-    text: text.join("\n"),
-    selections: {
-      start: pos,
-      end: pos,
-    }
-  }));
-  // await vim.execute(`call denops#notify("${vim.name}", "push", [getline(1, "$"), ${ws}])`);
-  await vim.call(`denops#notify`, [`${vim.name}`, "push", await vim.call("bufnr", "%")]);
 }
+
 
 export default ghost;

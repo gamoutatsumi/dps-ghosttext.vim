@@ -22,7 +22,7 @@ start(async (vim) => {
       const bufnr = arg as number
       const socket = bufHandlerMaps.filter((handler) => handler.bufnr === bufnr)[0].socket;
       const pos = [await vim.call("line", "."), await vim.call("col", ".")] as number[];
-      const text = await vim.call("getbufline", [vim.call("bufname", bufnr), 1, "$"]) as string[];
+      const text = await vim.call("getbufline", bufnr, 1, "$") as string[];
       const data = {
         text: text.join("\n"),
         selections: {
@@ -31,10 +31,16 @@ start(async (vim) => {
         }
       }
       socket.send(JSON.stringify(data));
+    },
+    async set_variables(): Promise<void> {
+      await vim.g.set("dps#ghosttext#ftmap", {
+        "github.com": "markdown"
+      })
     }
   });
   await vim.execute(`
     command! -nargs=* GhostStart call denops#notify("${vim.name}", "run", [<f-args>])
+    call denops#notify("${vim.name}", "set_variables", [])
   `);
 });
 

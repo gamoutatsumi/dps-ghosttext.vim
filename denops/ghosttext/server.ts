@@ -1,10 +1,12 @@
-import { createApp, createRouter, Router, setLevel, Loglevel } from "./vendor/https/deno.land/x/servest/mod.ts";
+import { createApp, setLevel, Loglevel } from "./vendor/https/deno.land/x/servest/mod.ts";
 
 import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
 import ghost from "./ghost.ts";
 
 import BufHandlerMap from "./mod.ts"
+
+import rand from "./rand.ts";
 
 const version = "0.0.0"
 
@@ -24,57 +26,60 @@ class Server {
 }
 
 const runServer = async (vim: Vim, addr: Deno.ListenOptions, bufHandlerMaps: BufHandlerMap[]): Promise<void> => {
-  setLevel(Loglevel.INFO);
-  const app = createApp({
+  setLevel(Loglevel.WARN);
+  const app = createApp();
+  app.handle("/", async (req) => {
+    const port = rand(49152, 65535);
+    await req.respond({
+      status: 200,
+      body: JSON.stringify({
+        WebSocketPort: port,
+        ProtocolVersion: 1,
+      }),
+      headers: new Headers({
+        "content-type": "application/json",
+      }),
+    });
+    await runWsServer(vim, port, bufHandlerMaps);
   });
-  const IndexRoutes = (): Router => {
-    const router = createRouter();
-    router.handle("/", async (req) => {
-      await req.respond({
-        status: 200,
-        body: JSON.stringify({
-          WebSocketPort: addr.port,
-          ProtocolVersion: 1,
-        }),
-        headers: new Headers({
-          "content-type": "application/json",
-        }),
-      });
+  app.handle("/version", async (req) => {
+    await req.respond({
+      status: 200,
+      body: version,
+      headers: new Headers({
+        "content-type": "text/plain",
+      }),
     });
-    router.handle("/version", async (req) => {
-      await req.respond({
-        status: 200,
-        body: version,
-        headers: new Headers({
-          "content-type": "text/plain",
-        }),
-      });
+  });
+  app.handle("/exit", async (req) => {
+    await req.respond({
+      status: 200,
+      body: "exiting...",
+      headers: new Headers({
+        "content-type": "text/plain",
+      }),
     });
-    router.handle("/exit", async (req) => {
-      await req.respond({
-        status: 200,
-        body: "exiting...",
-        headers: new Headers({
-          "content-type": "text/plain",
-        }),
-      });
+  });
+  app.handle("/is_ghost_binary", async (req) => {
+    await req.respond({
+      status: 200,
+      body: "True",
+      headers: new Headers({
+        "content-type": "text/plain",
+      }),
     });
-    router.handle("/is_ghost_binary", async (req) => {
-      await req.respond({
-        status: 200,
-        body: "True",
-        headers: new Headers({
-          "content-type": "text/plain",
-        }),
-      });
-    });
-    return router;
-  }
-  app.route("/", IndexRoutes());
-  app.ws("/", async (sock) => {
-    ghost(vim, sock, bufHandlerMaps);
   });
   app.listen(addr);
 }
 
+const runWsServer = async (vim: Vim, port: number, bufHandlerMaps: BufHandlerMap[]): Promise<void> => {
+  const wsApp = createApp();
+  wsApp.ws("/", async(sock) => {
+    await ghost(vim, sock, bufHandlerMaps);
+  })
+  wsApp.listen({
+    hostname: "127.0.0.1",
+    port: port
+  })
+}
 export default Server;
