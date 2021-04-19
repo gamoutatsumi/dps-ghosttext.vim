@@ -1,31 +1,41 @@
-import { createApp, setLevel, Loglevel } from "./vendor/https/deno.land/x/servest/mod.ts";
+import {
+  createApp,
+  Loglevel,
+  setLevel,
+} from "./vendor/https/deno.land/x/servest/mod.ts";
 
 import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
 import ghost from "./ghost.ts";
 
-import BufHandlerMap from "./mod.ts"
+import BufHandlerMap from "./mod.ts";
 
 import rand from "./rand.ts";
 
-const version = "0.0.0"
+const version = "0.0.0";
 
 class Server {
-  vim: Vim
-  addr: Deno.ListenOptions
-  bufHandlerMaps: BufHandlerMap[]
-  constructor(vim: Vim, bufHandlerMaps: BufHandlerMap[], port?: number) { 
+  vim: Vim;
+  addr: Deno.ListenOptions;
+  bufHandlerMaps: BufHandlerMap[];
+  constructor(vim: Vim, bufHandlerMaps: BufHandlerMap[], port?: number) {
     this.addr = {
       port: port ?? 4001,
-      hostname: "127.0.0.1"
-    }
+      hostname: "127.0.0.1",
+    };
     this.vim = vim;
     this.bufHandlerMaps = bufHandlerMaps;
   }
-  run() { runServer(this.vim, this.addr, this.bufHandlerMaps); }
+  run() {
+    runServer(this.vim, this.addr, this.bufHandlerMaps);
+  }
 }
 
-const runServer = async (vim: Vim, addr: Deno.ListenOptions, bufHandlerMaps: BufHandlerMap[]): Promise<void> => {
+const runServer = async (
+  vim: Vim,
+  addr: Deno.ListenOptions,
+  bufHandlerMaps: BufHandlerMap[],
+): Promise<void> => {
   setLevel(Loglevel.WARN);
   const app = createApp();
   app.handle("/", async (req) => {
@@ -70,16 +80,20 @@ const runServer = async (vim: Vim, addr: Deno.ListenOptions, bufHandlerMaps: Buf
     });
   });
   app.listen(addr);
-}
+};
 
-const runWsServer = async (vim: Vim, port: number, bufHandlerMaps: BufHandlerMap[]): Promise<void> => {
+const runWsServer = async (
+  vim: Vim,
+  port: number,
+  bufHandlerMaps: BufHandlerMap[],
+): Promise<void> => {
   const wsApp = createApp();
-  wsApp.ws("/", async(sock) => {
+  wsApp.ws("/", async (sock) => {
     await ghost(vim, sock, bufHandlerMaps);
-  })
+  });
   wsApp.listen({
     hostname: "127.0.0.1",
-    port: port
-  })
-}
+    port: port,
+  });
+};
 export default Server;

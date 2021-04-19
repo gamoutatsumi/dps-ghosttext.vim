@@ -1,39 +1,50 @@
-import { WebSocket, isWebSocketCloseEvent, WebSocketEvent } from "./vendor/https/deno.land/std/ws/mod.ts";
+import {
+  isWebSocketCloseEvent,
+  WebSocket,
+  WebSocketEvent,
+} from "./vendor/https/deno.land/std/ws/mod.ts";
 import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
 import BufHandlerMap from "./mod.ts";
 
 type GhostTextEvent = {
-  title: string,
-  text: string,
-  url: string,
-  syntax: string,
+  title: string;
+  text: string;
+  url: string;
+  syntax: string;
   selections: [{
-    start: number,
-    end: number,
-  }],
-} & WebSocketEvent
+    start: number;
+    end: number;
+  }];
+} & WebSocketEvent;
 
 type FileTypeMap = {
-  [key in string]: string
-}
+  [key in string]: string;
+};
 
-
-const ghost = async (vim: Vim, ws: WebSocket, bufHandlerMaps: BufHandlerMap[]): Promise<void> => {
-  const ftmap: FileTypeMap = await vim.g.get("dps#ghosttext#ftmap") as FileTypeMap
-  console.log(ftmap)
+const ghost = async (
+  vim: Vim,
+  ws: WebSocket,
+  bufHandlerMaps: BufHandlerMap[],
+): Promise<void> => {
+  const ftmap: FileTypeMap = await vim.g.get(
+    "dps#ghosttext#ftmap",
+  ) as FileTypeMap;
+  console.log(ftmap);
   for await (const event of ws) {
     if (isWebSocketCloseEvent(event) || (typeof event !== "string")) {
-      bufHandlerMaps = bufHandlerMaps.filter((handler) => handler.socket !== ws);
+      bufHandlerMaps = bufHandlerMaps.filter((handler) =>
+        handler.socket !== ws
+      );
       await vim.execute(`
         augroup dps_ghost
         autocmd!
         augroup END
-      `)
+      `);
       break;
     }
-    const data = JSON.parse(event) as GhostTextEvent
-    console.log(data)
+    const data = JSON.parse(event) as GhostTextEvent;
+    console.log(data);
     await vim.cmd(`edit ${data.url}`);
     await vim.call("setline", 1, data.text.split("\n"));
     await vim.execute(`
@@ -43,15 +54,14 @@ const ghost = async (vim: Vim, ws: WebSocket, bufHandlerMaps: BufHandlerMap[]): 
       setlocal ft=${ftmap[data.url]}
     `);
     const bufnr = await vim.call("bufnr", "%") as number;
-    bufHandlerMaps.push({bufnr: bufnr, socket: ws});
+    bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
     await vim.execute(`
       augroup dps_ghost
       autocmd!
       autocmd TextChanged,TextChangedP,TextChangedI <buffer> call denops#notify("${vim.name}", "push", [bufnr("%")])
       augroup END
-    `)
+    `);
   }
-}
-
+};
 
 export default ghost;
