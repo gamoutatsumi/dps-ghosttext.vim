@@ -5,7 +5,7 @@ import {
 } from "./vendor/https/deno.land/std/ws/mod.ts";
 import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
-import { BufHandlerMap, FileTypeMap } from "./mod.ts";
+import { BufHandlerMap, FileTypeMap } from "./app.ts";
 
 type GhostTextEvent = {
   title: string;
