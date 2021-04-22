@@ -21,7 +21,7 @@ main(async ({ vim }) => {
       }
       const server = new Server(vim, bufHandlerMaps, port);
       server.run();
-      return Promise.resolve()
+      return Promise.resolve();
     },
     async push(arg: unknown): Promise<void> {
       const bufnr = arg as number;
