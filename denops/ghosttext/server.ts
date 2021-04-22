@@ -1,6 +1,7 @@
 import {
   createApp,
   Loglevel,
+  ServerRequest,
   setLevel,
 } from "./vendor/https/deno.land/x/servest/mod.ts";
 
@@ -11,8 +12,6 @@ import { ghost } from "./ghost.ts";
 import { BufHandlerMap } from "./app.ts";
 
 import { rand } from "./rand.ts";
-
-const version = "0.0.0";
 
 export class Server {
   vim: Vim;
@@ -39,7 +38,26 @@ const runServer = (
   setLevel(Loglevel.WARN);
   const app = createApp();
   app.handle("/", async (req) => {
+    await runWsServer(vim, bufHandlerMaps, req);
+  });
+  app.listen(addr);
+};
+
+const runWsServer = async (
+  vim: Vim,
+  bufHandlerMaps: BufHandlerMap[],
+  req: ServerRequest,
+): Promise<void> => {
+  try {
     const port = rand(49152, 65535);
+    const wsApp = createApp();
+    wsApp.ws("/", async (sock) => {
+      await ghost(vim, sock, bufHandlerMaps);
+    });
+    wsApp.listen({
+      hostname: "127.0.0.1",
+      port: port,
+    });
     await req.respond({
       status: 200,
       body: JSON.stringify({
@@ -50,49 +68,7 @@ const runServer = (
         "content-type": "application/json",
       }),
     });
-    runWsServer(vim, port, bufHandlerMaps);
-  });
-  app.handle("/version", async (req) => {
-    await req.respond({
-      status: 200,
-      body: version,
-      headers: new Headers({
-        "content-type": "text/plain",
-      }),
-    });
-  });
-  app.handle("/exit", async (req) => {
-    await req.respond({
-      status: 200,
-      body: "exiting...",
-      headers: new Headers({
-        "content-type": "text/plain",
-      }),
-    });
-  });
-  app.handle("/is_ghost_binary", async (req) => {
-    await req.respond({
-      status: 200,
-      body: "True",
-      headers: new Headers({
-        "content-type": "text/plain",
-      }),
-    });
-  });
-  app.listen(addr);
-};
-
-const runWsServer = (
-  vim: Vim,
-  port: number,
-  bufHandlerMaps: BufHandlerMap[],
-): void => {
-  const wsApp = createApp();
-  wsApp.ws("/", async (sock) => {
-    await ghost(vim, sock, bufHandlerMaps);
-  });
-  wsApp.listen({
-    hostname: "127.0.0.1",
-    port: port,
-  });
+  } catch {
+    await runWsServer(vim, bufHandlerMaps, req);
+  }
 };
