@@ -54,11 +54,5 @@ export const ghost = async (
         `call denops#notify("${vim.name}", "push", [bufnr("%")])`,
       );
     });
-    /* await vim.execute(`
-      augroup dps_ghost
-      autocmd!
-      autocmd TextChanged,TextChangedP,TextChangedI <buffer> call denops#notify("${vim.name}", "push", [bufnr("%")])
-      augroup END
-    `); */
   }
 };
