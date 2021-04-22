@@ -15,12 +15,13 @@ export type FileTypeMap = {
 
 main(async ({ vim }) => {
   vim.register({
-    async run(port: unknown): Promise<void> {
+    run(port: unknown): Promise<void> {
       if (typeof port !== "number" && port !== undefined) {
         throw new Error(`'port' must be a number`);
       }
       const server = new Server(vim, bufHandlerMaps, port);
       server.run();
+      return Promise.resolve()
     },
     async push(arg: unknown): Promise<void> {
       const bufnr = arg as number;
