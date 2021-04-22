@@ -1,17 +1,18 @@
 import {
-  createApp,
-  Loglevel,
-  ServerRequest,
-  setLevel,
-} from "./vendor/https/deno.land/x/servest/mod.ts";
+  acceptable,
+  acceptWebSocket,
+} from "./vendor/https/deno.land/std/ws/mod.ts";
+
+import {
+  listenAndServe,
+  serve,
+} from "./vendor/https/deno.land/std/http/mod.ts";
 
 import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
 import { ghost } from "./ghost.ts";
 
 import { BufHandlerMap } from "./app.ts";
-
-import { rand } from "./rand.ts";
 
 export class Server {
   vim: Vim;
@@ -30,45 +31,37 @@ export class Server {
   }
 }
 
-const runServer = (
+const runServer = async (
   vim: Vim,
   addr: Deno.ListenOptions,
   bufHandlerMaps: BufHandlerMap[],
-): void => {
-  setLevel(Loglevel.WARN);
-  const app = createApp();
-  app.handle("/", async (req) => {
-    await runWsServer(vim, bufHandlerMaps, req);
-  });
-  app.listen(addr);
-};
-
-const runWsServer = async (
-  vim: Vim,
-  bufHandlerMaps: BufHandlerMap[],
-  req: ServerRequest,
 ): Promise<void> => {
-  try {
-    const port = rand(49152, 65535);
-    const wsApp = createApp();
-    wsApp.ws("/", async (sock) => {
-      await ghost(vim, sock, bufHandlerMaps);
-    });
-    wsApp.listen({
-      hostname: "127.0.0.1",
-      port: port,
-    });
-    await req.respond({
-      status: 200,
-      body: JSON.stringify({
-        WebSocketPort: port,
-        ProtocolVersion: 1,
-      }),
-      headers: new Headers({
-        "content-type": "application/json",
-      }),
-    });
-  } catch {
-    await runWsServer(vim, bufHandlerMaps, req);
-  }
+  await listenAndServe(addr, async (req) => {
+    if (req.method === "GET" && req.url === "/") {
+      const wsServer = serve({ hostname: "127.0.0.1", port: 0 });
+      await req.respond({
+        status: 200,
+        body: JSON.stringify({
+          // @ts-ignore
+          WebSocketPort: wsServer.listener.addr.port,
+          ProtocolVersion: 1,
+        }),
+        headers: new Headers({
+          "content-type": "application/json",
+        }),
+      });
+      for await (const req of wsServer) {
+        if (req.method === "GET" && req.url === "/" && acceptable(req)) {
+          acceptWebSocket({
+            conn: req.conn,
+            bufReader: req.r,
+            bufWriter: req.w,
+            headers: req.headers,
+          }).then(async (ws) => {
+            await ghost(vim, ws, bufHandlerMaps);
+          });
+        }
+      }
+    }
+  });
 };

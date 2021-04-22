@@ -3,17 +3,12 @@
     "version": "@0.93.0",
     "modules": [
       "/testing/asserts.ts",
-      "/ws/mod.ts"
+      "/ws/mod.ts",
+      "/http/mod.ts"
     ]
   },
   "https://deno.land/x/denops_std": {
     "version": "@v0.8",
-    "modules": [
-      "/mod.ts"
-    ]
-  },
-  "https://deno.land/x/servest": {
-    "version": "@v1.3.1",
     "modules": [
       "/mod.ts"
     ]
