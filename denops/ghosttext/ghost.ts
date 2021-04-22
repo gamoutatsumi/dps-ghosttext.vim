@@ -31,11 +31,9 @@ export const ghost = async (
       bufHandlerMaps = bufHandlerMaps.filter((handler) =>
         handler.socket !== ws
       );
-      await vim.execute(`
-        augroup dps_ghost
-        autocmd!
-        augroup END
-      `);
+      await vim.autocmd("dps_ghost", (helper) => {
+        helper.remove();
+      });
       break;
     }
     const data = JSON.parse(event) as GhostTextEvent;
@@ -49,11 +47,18 @@ export const ghost = async (
     `);
     const bufnr = await vim.call("bufnr", "%") as number;
     bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
-    await vim.execute(`
+    await vim.autocmd("dps_ghost", (helper) => {
+      helper.define(
+        ["TextChanged", "TextChangedP", "TextChangedI"],
+        "<buffer>",
+        `call denops#notify("${vim.name}", "push", [bufnr("%")])`,
+      );
+    });
+    /* await vim.execute(`
       augroup dps_ghost
       autocmd!
       autocmd TextChanged,TextChangedP,TextChangedI <buffer> call denops#notify("${vim.name}", "push", [bufnr("%")])
       augroup END
-    `);
+    `); */
   }
 };
