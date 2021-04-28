@@ -1,6 +1,6 @@
 import { main } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 import { WebSocket } from "./vendor/https/deno.land/std/ws/mod.ts";
-import { Server } from "./server.ts";
+import { runServer } from "./server.ts";
 
 export interface BufHandlerMap {
   bufnr: number;
@@ -19,8 +19,7 @@ main(async ({ vim }) => {
       if (typeof port !== "number" && port !== undefined) {
         throw new Error(`'port' must be a number`);
       }
-      const server = new Server(vim, bufHandlerMaps, port);
-      server.run();
+      runServer(vim, bufHandlerMaps, port);
       return Promise.resolve();
     },
     async push(arg: unknown): Promise<void> {

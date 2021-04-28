@@ -14,29 +14,12 @@ import { ghost } from "./ghost.ts";
 
 import { BufHandlerMap } from "./app.ts";
 
-export class Server {
-  vim: Vim;
-  addr: Deno.ListenOptions;
-  bufHandlerMaps: BufHandlerMap[];
-  constructor(vim: Vim, bufHandlerMaps: BufHandlerMap[], port?: number) {
-    this.addr = {
-      port: port ?? 4001,
-      hostname: "127.0.0.1",
-    };
-    this.vim = vim;
-    this.bufHandlerMaps = bufHandlerMaps;
-  }
-  run() {
-    runServer(this.vim, this.addr, this.bufHandlerMaps);
-  }
-}
-
-const runServer = async (
+export const runServer = async (
   vim: Vim,
-  addr: Deno.ListenOptions,
   bufHandlerMaps: BufHandlerMap[],
+  port = 4001,
 ): Promise<void> => {
-  await listenAndServe(addr, async (req) => {
+  await listenAndServe({ hostname: "127.0.0.1", port: port }, async (req) => {
     if (req.method === "GET" && req.url === "/") {
       const wsServer = serve({ hostname: "127.0.0.1", port: 0 });
       await req.respond({
