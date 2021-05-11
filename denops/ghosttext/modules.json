@@ -8,7 +8,7 @@
     ]
   },
   "https://deno.land/x/denops_std": {
-    "version": "@v0.8",
+    "version": "@v1.0",
     "modules": [
       "/mod.ts"
     ]
