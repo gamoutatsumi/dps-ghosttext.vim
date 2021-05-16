@@ -1,6 +1,6 @@
 {
   "https://deno.land/std": {
-    "version": "@0.95.0",
+    "version": "@0.96.0",
     "modules": [
       "/testing/asserts.ts",
       "/ws/mod.ts",
@@ -8,7 +8,7 @@
     ]
   },
   "https://deno.land/x/denops_std": {
-    "version": "@v1.0",
+    "version": "@v0.10",
     "modules": [
       "/mod.ts"
     ]
