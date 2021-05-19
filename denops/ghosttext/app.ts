@@ -1,17 +1,8 @@
 import { main, ensureNumber } from "./vendor/https/deno.land/x/denops_std/mod.ts";
-import { WebSocket } from "./vendor/https/deno.land/std/ws/mod.ts";
 import { runServer } from "./server.ts";
+import { BufHandlerMaps } from "./types.ts";
 
-export interface BufHandlerMap {
-  bufnr: number;
-  socket: WebSocket;
-}
-
-const bufHandlerMaps: BufHandlerMap[] = [];
-
-export type FileTypeMap = {
-  [key in string]: string;
-};
+const bufHandlerMaps: BufHandlerMaps = [];
 
 main(async ({ vim }) => {
   vim.register({

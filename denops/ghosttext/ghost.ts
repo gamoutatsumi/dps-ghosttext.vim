@@ -5,7 +5,7 @@ import {
 } from "./vendor/https/deno.land/std/ws/mod.ts";
 import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
-import { BufHandlerMap, FileTypeMap } from "./app.ts";
+import { BufHandlerMaps, FileTypeMap } from "./types.ts";
 
 type GhostTextEvent = {
   title: string;
@@ -21,7 +21,7 @@ type GhostTextEvent = {
 export const ghost = async (
   vim: Vim,
   ws: WebSocket,
-  bufHandlerMaps: BufHandlerMap[],
+  bufHandlerMaps: BufHandlerMaps,
 ): Promise<void> => {
   const ftmap: FileTypeMap = await vim.g.get(
     "dps_ghosttext_ftmap",

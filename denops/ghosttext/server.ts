@@ -12,11 +12,11 @@ import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
 import { ghost } from "./ghost.ts";
 
-import { BufHandlerMap } from "./app.ts";
+import { BufHandlerMaps } from "./types.ts";
 
 export const runServer = async (
   vim: Vim,
-  bufHandlerMaps: BufHandlerMap[],
+  bufHandlerMaps: BufHandlerMaps,
   port = 4001,
 ): Promise<void> => {
   await listenAndServe({ hostname: "127.0.0.1", port: port }, async (req) => {
