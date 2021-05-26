@@ -27,31 +27,31 @@ export const ghost = async (
     "dps_ghosttext_ftmap",
   ) as FileTypeMap;
   for await (const event of ws) {
-    if (isWebSocketCloseEvent(event) || (typeof event !== "string")) {
-      bufHandlerMaps = bufHandlerMaps.filter((handler) =>
-        handler.socket !== ws
-      );
+    if (isWebSocketCloseEvent(event)) {
+      const bufnr = bufHandlerMaps.splice(bufHandlerMaps.findIndex((handler) => handler.socket === ws), 1)[0].bufnr
       await vim.autocmd("dps_ghost", (helper) => {
         helper.remove();
       });
+      await vim.execute(`bdelete ${bufnr}`)
       break;
     }
-    const data = JSON.parse(event) as GhostTextEvent;
-    await vim.cmd(`edit ${data.url}`);
-    await vim.call("setline", 1, data.text.split("\n"));
+    const data = JSON.parse(event.toString()) as GhostTextEvent;
+    const bufnr = await vim.fn.bufadd(data.url);
+    await vim.fn.bufload(bufnr)
+    await vim.call("setbufline", bufnr, 1, data.text.split("\n"));
+    await vim.execute(`buffer ${bufnr}`);
     await vim.execute(`
       setlocal buftype=nofile
       setlocal nobackup noswapfile
       setlocal bufhidden=hide
       setlocal ft=${ftmap[data.url]}
     `);
-    const bufnr = await vim.call("bufnr", "%") as number;
     bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
     await vim.autocmd("dps_ghost", (helper) => {
       helper.define(
         ["TextChanged", "TextChangedP", "TextChangedI"],
         "<buffer>",
-        `call denops#notify("${vim.name}", "push", [bufnr("%")])`,
+        `call denops#notify("${vim.name}", "push", [${bufnr}])`,
       );
     });
   }

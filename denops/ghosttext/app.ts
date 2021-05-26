@@ -7,8 +7,10 @@ const bufHandlerMaps: BufHandlerMaps = [];
 main(async ({ vim }) => {
   vim.register({
     run(port: unknown): Promise<void> {
-      ensureNumber(port, "port");
-      runServer(vim, bufHandlerMaps, port);
+      if (port !== undefined) {
+        ensureNumber(port, "port");
+      }
+      runServer(vim, bufHandlerMaps, port)
       return Promise.resolve();
     },
     async push(arg: unknown): Promise<void> {

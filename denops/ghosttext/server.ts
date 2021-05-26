@@ -35,13 +35,13 @@ export const runServer = async (
       });
       for await (const req of wsServer) {
         if (req.method === "GET" && req.url === "/" && acceptable(req)) {
-          acceptWebSocket({
+          await acceptWebSocket({
             conn: req.conn,
             bufReader: req.r,
             bufWriter: req.w,
             headers: req.headers,
           }).then(async (ws) => {
-            await ghost(vim, ws, bufHandlerMaps);
+              await ghost(vim, ws, bufHandlerMaps)
           });
         }
       }
