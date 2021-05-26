@@ -10,7 +10,7 @@ WIP: GhostText plugin for denops.vim
 
 `:GhostStart`
 
-![demo](./image/screenshot.png)
+![demo](https://user-images.githubusercontent.com/47162587/119617512-e426df00-be3c-11eb-94fe-1c1aa0ac9bde.png)
 
 ## LICENSE
 
