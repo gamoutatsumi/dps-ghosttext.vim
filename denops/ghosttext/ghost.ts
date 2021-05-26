@@ -32,7 +32,7 @@ export const ghost = async (
       await vim.autocmd("dps_ghost", (helper) => {
         helper.remove();
       });
-      await vim.execute(`bdelete ${bufnr}`)
+      await vim.execute(`bwipeout ${bufnr}`)
       break;
     }
     const data = JSON.parse(event.toString()) as GhostTextEvent;
@@ -43,7 +43,7 @@ export const ghost = async (
     await vim.execute(`
       setlocal buftype=nofile
       setlocal nobackup noswapfile
-      setlocal bufhidden=hide
+      setlocal buflisted
       setlocal ft=${ftmap[data.url]}
     `);
     bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
