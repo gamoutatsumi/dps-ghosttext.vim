@@ -41,7 +41,7 @@ export const runServer = async (
             bufWriter: req.w,
             headers: req.headers,
           }).then(async (ws) => {
-              await ghost(vim, ws, bufHandlerMaps)
+            await ghost(vim, ws, bufHandlerMaps);
           });
         }
       }

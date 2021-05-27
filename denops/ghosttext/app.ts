@@ -1,4 +1,7 @@
-import { main, ensureNumber } from "./vendor/https/deno.land/x/denops_std/mod.ts";
+import {
+  ensureNumber,
+  main,
+} from "./vendor/https/deno.land/x/denops_std/mod.ts";
 import { runServer } from "./server.ts";
 import { BufHandlerMaps } from "./types.ts";
 
@@ -10,7 +13,7 @@ main(async ({ vim }) => {
       if (port !== undefined) {
         ensureNumber(port, "port");
       }
-      runServer(vim, bufHandlerMaps, port)
+      runServer(vim, bufHandlerMaps, port);
       return Promise.resolve();
     },
     async push(arg: unknown): Promise<void> {

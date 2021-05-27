@@ -28,16 +28,19 @@ export const ghost = async (
   ) as FileTypeMap;
   for await (const event of ws) {
     if (isWebSocketCloseEvent(event)) {
-      const bufnr = bufHandlerMaps.splice(bufHandlerMaps.findIndex((handler) => handler.socket === ws), 1)[0].bufnr
+      const bufnr = bufHandlerMaps.splice(
+        bufHandlerMaps.findIndex((handler) => handler.socket === ws),
+        1,
+      )[0].bufnr;
       await vim.autocmd("dps_ghost", (helper) => {
         helper.remove();
       });
-      await vim.execute(`bwipeout ${bufnr}`)
+      await vim.execute(`bwipeout ${bufnr}`);
       break;
     }
     const data = JSON.parse(event.toString()) as GhostTextEvent;
     const bufnr = await vim.fn.bufadd(data.url);
-    await vim.fn.bufload(bufnr)
+    await vim.fn.bufload(bufnr);
     await vim.call("setbufline", bufnr, 1, data.text.split("\n"));
     await vim.execute(`buffer ${bufnr}`);
     await vim.execute(`

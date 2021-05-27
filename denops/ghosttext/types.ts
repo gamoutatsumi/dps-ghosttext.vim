@@ -5,9 +5,8 @@ interface BufHandlerMap {
   socket: WebSocket;
 }
 
-export type BufHandlerMaps = BufHandlerMap[]
+export type BufHandlerMaps = BufHandlerMap[];
 
 export type FileTypeMap = {
   [key in string]: string;
 };
-
