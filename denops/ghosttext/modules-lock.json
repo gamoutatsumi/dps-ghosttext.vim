@@ -7,7 +7,17 @@
     ]
   },
   "https://deno.land/x/denops_std": {
-    "version": "@v0.11",
+    "version": "@v1.0.0-alpha.0",
+    "modules": [
+      "/mod.ts",
+      "/helper/mod.ts",
+      "/variable/mod.ts",
+      "/autocmd/mod.ts",
+      "/function/mod.ts"
+    ]
+  },
+  "https://deno.land/x/unknownutil": {
+    "version": "@v0.1.1",
     "modules": [
       "/mod.ts"
     ]

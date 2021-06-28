@@ -3,7 +3,11 @@ import {
   WebSocket,
   WebSocketEvent,
 } from "./vendor/https/deno.land/std/ws/mod.ts";
-import { Vim } from "./vendor/https/deno.land/x/denops_std/mod.ts";
+import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
+import { globals } from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
+import * as fn from "./vendor/https/deno.land/x/denops_std/function/mod.ts";
+import * as helper from "./vendor/https/deno.land/x/denops_std/helper/mod.ts";
+import * as autocmd from "./vendor/https/deno.land/x/denops_std/autocmd/mod.ts";
 
 import { BufHandlerMaps, FileTypeMap } from "./types.ts";
 
@@ -19,11 +23,12 @@ type GhostTextEvent = {
 } & WebSocketEvent;
 
 export const ghost = async (
-  vim: Vim,
+  denops: Denops,
   ws: WebSocket,
   bufHandlerMaps: BufHandlerMaps,
 ): Promise<void> => {
-  const ftmap: FileTypeMap = await vim.g.get(
+  const ftmap: FileTypeMap = await globals.get(
+    denops,
     "dps_ghosttext_ftmap",
   ) as FileTypeMap;
   for await (const event of ws) {
@@ -32,29 +37,35 @@ export const ghost = async (
         bufHandlerMaps.findIndex((handler) => handler.socket === ws),
         1,
       )[0].bufnr;
-      await vim.autocmd("dps_ghost", (helper) => {
-        helper.remove();
-      });
-      await vim.execute(`bwipeout ${bufnr}`);
+      await autocmd.remove(
+        denops,
+        ["TextChanged", "TextChangedP", "TextChangedI"],
+        "*",
+        { group: "dps_ghost" },
+      );
+      await helper.execute(denops, `bwipeout ${bufnr}`);
       break;
     }
     const data = JSON.parse(event.toString()) as GhostTextEvent;
-    const bufnr = await vim.fn.bufadd(data.url);
-    await vim.fn.bufload(bufnr);
-    await vim.call("setbufline", bufnr, 1, data.text.split("\n"));
-    await vim.execute(`buffer ${bufnr}`);
-    await vim.execute(`
+    const bufnr = await fn.bufadd(denops, data.url);
+    await fn.bufload(denops, bufnr);
+    await fn.setbufline(denops, bufnr, 1, data.text.split("\n"));
+    await helper.execute(denops, `buffer ${bufnr}`);
+    await helper.execute(
+      denops,
+      `
       setlocal buftype=nofile
       setlocal nobackup noswapfile
       setlocal buflisted
       setlocal ft=${ftmap[data.url]}
-    `);
+    `,
+    );
     bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
-    await vim.autocmd("dps_ghost", (helper) => {
+    await autocmd.group(denops, "dps_ghost", (helper) => {
       helper.define(
-        ["TextChanged", "TextChangedP", "TextChangedI"],
+        ["TextChanged", "TextChangedI", "TextChangedP"],
         "<buffer>",
-        `call denops#notify("${vim.name}", "push", [${bufnr}])`,
+        `call denops#notify("${denops.name}", "push", [${bufnr}])`,
       );
     });
   }
