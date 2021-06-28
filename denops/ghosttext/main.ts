@@ -1,6 +1,6 @@
 import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
-import { globals } from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
-import { execute } from "./vendor/https/deno.land/x/denops_std/helper/mod.ts";
+import * as variable from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
+import * as helper from "./vendor/https/deno.land/x/denops_std/helper/mod.ts";
 import { ensureNumber } from "./vendor/https/deno.land/x/unknownutil/mod.ts";
 import { runServer } from "./server.ts";
 import { BufHandlerMaps } from "./types.ts";
@@ -39,20 +39,20 @@ export async function main(denops: Denops): Promise<void> {
         if (
           await denops.call("exists", `g:dps_ghosttext_ftmap["github"]`) === 0
         ) {
-          await globals.set(
+          await variable.g.set(
             denops,
             `dps_ghosttext_ftmap["github.com"]`,
             "markdown",
           );
         }
       } else {
-        await globals.set(denops, "dps_ghosttext_ftmap", {
+        await variable.g.set(denops, "dps_ghosttext_ftmap", {
           "github.com": "markdown",
         });
       }
     },
   };
-  await execute(
+  await helper.execute(
     denops,
     `
     command! -nargs=* GhostStart call denops#notify("${denops.name}", "run", [<f-args>])
