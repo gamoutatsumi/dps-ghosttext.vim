@@ -4,7 +4,7 @@ import {
   WebSocketEvent,
 } from "./vendor/https/deno.land/std/ws/mod.ts";
 import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
-import * as variable from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
+import * as vars from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
 import * as fn from "./vendor/https/deno.land/x/denops_std/function/mod.ts";
 import * as helper from "./vendor/https/deno.land/x/denops_std/helper/mod.ts";
 import * as autocmd from "./vendor/https/deno.land/x/denops_std/autocmd/mod.ts";
@@ -27,7 +27,7 @@ export const ghost = async (
   ws: WebSocket,
   bufHandlerMaps: BufHandlerMaps,
 ): Promise<void> => {
-  const ftmap: FileTypeMap = await variable.g.get(
+  const ftmap: FileTypeMap = await vars.g.get(
     denops,
     "dps_ghosttext_ftmap",
   ) as FileTypeMap;

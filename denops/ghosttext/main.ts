@@ -1,5 +1,5 @@
 import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
-import * as variable from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
+import * as vars from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
 import * as helper from "./vendor/https/deno.land/x/denops_std/helper/mod.ts";
 import { ensureNumber } from "./vendor/https/deno.land/x/unknownutil/mod.ts";
 import { runServer } from "./server.ts";
@@ -40,14 +40,14 @@ export async function main(denops: Denops): Promise<void> {
         if (
           await fn.exists(denops, `g:dps_ghosttext_ftmap["github"]`)
         ) {
-          await variable.g.set(
+          await vars.g.set(
             denops,
             `dps_ghosttext_ftmap["github.com"]`,
             "markdown",
           );
         }
       } else {
-        await variable.g.set(denops, "dps_ghosttext_ftmap", {
+        await vars.g.set(denops, "dps_ghosttext_ftmap", {
           "github.com": "markdown",
         });
       }
