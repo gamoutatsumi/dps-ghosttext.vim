@@ -22,8 +22,8 @@ export async function main(denops: Denops): Promise<void> {
       const socket =
         bufHandlerMaps.filter((handler) => handler.bufnr === bufnr)[0].socket;
       const pos = [
-        await denops.call("line", "."),
-        await denops.call("col", "."),
+        await fn.line(denops, "."),
+        await fn.col(denops, "."),
       ] as number[];
       const text = await fn.getbufline(denops, bufnr, 1, "$");
       const data = {
