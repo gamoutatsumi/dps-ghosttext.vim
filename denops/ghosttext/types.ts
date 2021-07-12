@@ -1,9 +1,9 @@
 import { WebSocket } from "./vendor/https/deno.land/std/ws/mod.ts";
 
-interface BufHandlerMap {
+type BufHandlerMap = {
   bufnr: number;
   socket: WebSocket;
-}
+};
 
 export type BufHandlerMaps = BufHandlerMap[];
 

@@ -24,7 +24,7 @@ export async function main(denops: Denops): Promise<void> {
       const pos = [
         await fn.line(denops, "."),
         await fn.col(denops, "."),
-      ] as number[];
+      ] as [number, number];
       const text = await fn.getbufline(denops, bufnr, 1, "$");
       const data = {
         text: text.join("\n"),
