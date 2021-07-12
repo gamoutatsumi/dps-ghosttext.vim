@@ -6,5 +6,18 @@ tools: FORCE
 
 dlink: FORCE
 	@cd denops/ghosttext; ${TOOLS}/bin/dlink
+	@make fmt
+
+lint: FORCE
+	@deno lint
+
+fmt: FORCE
+	@deno fmt
+
+fmt-check: FORCE
+	@deno fmt --check
+
+type-check: FORCE
+	@deno test --unstable --no-run $$(find . -name '*.ts')
 
 FORCE:
