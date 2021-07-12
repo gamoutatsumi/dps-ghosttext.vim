@@ -7,6 +7,7 @@ tools: FORCE
 dlink: FORCE
 	@cd denops/ghosttext; ${TOOLS}/bin/dlink
 	@make fmt
+	@make cache
 
 lint: FORCE
 	@deno lint
@@ -19,5 +20,8 @@ fmt-check: FORCE
 
 type-check: FORCE
 	@deno test --unstable --no-run $$(find . -name '*.ts')
+
+cache: FORCE
+	@deno cache --unstable $$(find ./denops/ghosttext/vendor -name '*.ts')
 
 FORCE:
