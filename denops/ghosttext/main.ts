@@ -21,17 +21,14 @@ export async function main(denops: Denops): Promise<void> {
       const bufnr = arg as number;
       const socket =
         bufHandlerMaps.filter((handler) => handler.bufnr === bufnr)[0].socket;
-      const pos = [
-        await fn.line(denops, "."),
-        await fn.col(denops, "."),
-      ] as [number, number];
+      const selectPos = {
+        start: await fn.line(denops, "'<"),
+        end: await fn.col(denops, "'>"),
+      }
       const text = await fn.getbufline(denops, bufnr, 1, "$");
       const data = {
         text: text.join("\n"),
-        selections: {
-          start: pos,
-          end: pos,
-        },
+        selections: selectPos 
       };
       socket.send(JSON.stringify(data));
     },
