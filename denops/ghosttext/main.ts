@@ -1,7 +1,10 @@
 import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 import * as vars from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
 import * as helper from "./vendor/https/deno.land/x/denops_std/helper/mod.ts";
-import { ensureNumber } from "./vendor/https/deno.land/x/unknownutil/mod.ts";
+import {
+  ensureNumber,
+  ensureString,
+} from "./vendor/https/deno.land/x/unknownutil/mod.ts";
 import { runServer } from "./server.ts";
 import * as fn from "./vendor/https/deno.land/x/denops_std/function/mod.ts";
 import { BufHandlerMaps } from "./types.ts";
@@ -12,6 +15,8 @@ export async function main(denops: Denops): Promise<void> {
   denops.dispatcher = {
     run(port: unknown): Promise<void> {
       if (port !== undefined) {
+        ensureString(port);
+        port = +port;
         ensureNumber(port);
       }
       runServer(denops, bufHandlerMaps, port);
@@ -24,11 +29,11 @@ export async function main(denops: Denops): Promise<void> {
       const selectPos = {
         start: await fn.line(denops, "'<"),
         end: await fn.col(denops, "'>"),
-      }
+      };
       const text = await fn.getbufline(denops, bufnr, 1, "$");
       const data = {
         text: text.join("\n"),
-        selections: selectPos 
+        selections: selectPos,
       };
       socket.send(JSON.stringify(data));
     },
