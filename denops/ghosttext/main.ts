@@ -1,6 +1,4 @@
 import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
-import * as vars from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
-import * as helper from "./vendor/https/deno.land/x/denops_std/helper/mod.ts";
 import {
   ensureNumber,
   ensureString,
@@ -37,29 +35,5 @@ export async function main(denops: Denops): Promise<void> {
       };
       socket.send(JSON.stringify(data));
     },
-    async set_variables(): Promise<void> {
-      if (await fn.exists(denops, "g:dps_ghosttext_ftmap")) {
-        if (
-          await fn.exists(denops, `g:dps_ghosttext_ftmap["github"]`)
-        ) {
-          await vars.g.set(
-            denops,
-            `dps_ghosttext_ftmap["github.com"]`,
-            "markdown",
-          );
-        }
-      } else {
-        await vars.g.set(denops, "dps_ghosttext_ftmap", {
-          "github.com": "markdown",
-        });
-      }
-    },
   };
-  await helper.execute(
-    denops,
-    `
-    command! -nargs=* GhostStart call denops#notify("${denops.name}", "run", [<f-args>])
-    call denops#notify("${denops.name}", "set_variables", [])
-  `,
-  );
 }
