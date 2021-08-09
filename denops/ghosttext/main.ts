@@ -9,7 +9,7 @@ import { BufHandlerMaps } from "./types.ts";
 
 const bufHandlerMaps: BufHandlerMaps = [];
 
-export async function main(denops: Denops): Promise<void> {
+export function main(denops: Denops): Promise<void> {
   denops.dispatcher = {
     run(port: unknown): Promise<void> {
       if (port !== undefined) {
@@ -36,4 +36,5 @@ export async function main(denops: Denops): Promise<void> {
       socket.send(JSON.stringify(data));
     },
   };
+  return Promise.resolve();
 }
