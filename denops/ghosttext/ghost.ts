@@ -29,7 +29,7 @@ export const ghost = async (
 ): Promise<void> => {
   const ftmap: FileTypeMap = await vars.g.get(
     denops,
-    "dps_ghosttext_ftmap",
+    "dps_ghosttext#ftmap",
   ) as FileTypeMap;
   for await (const event of ws) {
     if (isWebSocketCloseEvent(event)) {
@@ -57,9 +57,14 @@ export const ghost = async (
       setlocal buftype=nofile
       setlocal nobackup noswapfile
       setlocal buflisted
-      setlocal ft=${ftmap[data.url]}
     `,
     );
+    if (data.url in ftmap) {
+      await helper.execute(
+        denops,
+        `setlocal ft=${ftmap[data.url]}`,
+      );
+    }
     bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
     await autocmd.group(denops, "dps_ghost", (helper) => {
       helper.define(
