@@ -64,6 +64,11 @@ export const ghost = async (
         denops,
         `setlocal ft=${ftmap[data.url]}`,
       );
+    } else {
+      await helper.execute(
+        denops,
+        `setlocal ft=text`,
+      );
     }
     bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
     await autocmd.group(denops, "dps_ghost", (helper) => {
