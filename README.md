@@ -1,6 +1,6 @@
 # dps-ghosttext.vim
 
-GhostText plugin for denops.vim
+[GhostText](https://ghosttext.fregante.com) plugin for denops.vim
 
 ## Requirements
 
