@@ -11,7 +11,6 @@ INTRODUCTION				|dps-ghosttext-introduction|
 INSTALL					|dps-ghosttext-install|
 INTERFACE				|dps-ghosttext-interface|
   VARIABLE				|dps-ghosttext-variable|
-  COMMAND				|dps-ghosttext-command|
 
 
 =============================================================================
@@ -32,22 +31,26 @@ https://github.com/vim-denops/denops.vim
 INTERFACE					*dps-ghosttext-interface*
 
 -----------------------------------------------------------------------------
-VARIABLE						*dps-ghosttext-variable*
+VARIABLE					*dps-ghosttext-variable*
 
-*g:dps_ghosttext#ftmap*
+g:dps_ghosttext#ftmap				*g:dps_ghosttext#ftmap*
   Dictionary of filetype mappings. Normally, key is domain name. (e.g. If in
   "www.github.com" so "github.com") Value is generally vim filetypes. (e.g.
   "markdown")
   Default: {"github.com": "markdown"}
 
-*g:dps_ghosttext#disable_defaultmap*
+g:dps_ghosttext#disable_defaultmap		*g:dps_ghosttext#disable_defaultmap*
   Set 1 to disable default values of |g:dps_ghosttext#ftmap|.
   Default: 0
 
------------------------------------------------------------------------------
-COMMAND						*dps-ghosttext-command*
+g:dps_ghosttext#enable_autostart		*g:dps_ghosttext#enable_autostart*
+  Set 1 to enable autostart GhostText Server.
+  Default: 0
 
-:GhostStart [{port}]				*:GhostStart*
+-----------------------------------------------------------------------------
+COMMAND                        			*dps-ghosttext-command*
+
+*:GhostStart*			                *:GhostStart*
   Startup GhostText server using number of {port}. Default {port} is 4001.
 
 vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:

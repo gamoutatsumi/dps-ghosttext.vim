@@ -11,13 +11,8 @@ const bufHandlerMaps: BufHandlerMaps = [];
 
 export function main(denops: Denops): Promise<void> {
   denops.dispatcher = {
-    run(port: unknown): Promise<void> {
-      if (port !== undefined) {
-        ensureString(port);
-        port = +port;
-        ensureNumber(port);
-      }
-      runServer(denops, bufHandlerMaps, port);
+    run(): Promise<void> {
+      runServer(denops, bufHandlerMaps);
       return Promise.resolve();
     },
     async push(arg: unknown): Promise<void> {

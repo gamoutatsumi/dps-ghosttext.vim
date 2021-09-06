@@ -19,6 +19,18 @@ export const runServer = async (
   bufHandlerMaps: BufHandlerMaps,
   port = 4001,
 ): Promise<void> => {
+  try {
+    const listener = Deno.listen({
+      port: port,
+      hostname: "127.0.0.1"
+    })
+    listener.close()
+  } catch (error) {
+    if (error instanceof Deno.errors.AddrInUse) {
+      return
+    }
+  }
+  console.log("GhostText Server started")
   await listenAndServe({ hostname: "127.0.0.1", port: port }, async (req) => {
     if (req.method === "GET" && req.url === "/") {
       const wsServer = serve({ hostname: "127.0.0.1", port: 0 });
