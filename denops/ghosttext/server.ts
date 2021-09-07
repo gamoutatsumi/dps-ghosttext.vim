@@ -22,15 +22,15 @@ export const runServer = async (
   try {
     const listener = Deno.listen({
       port: port,
-      hostname: "127.0.0.1"
-    })
-    listener.close()
+      hostname: "127.0.0.1",
+    });
+    listener.close();
   } catch (error) {
     if (error instanceof Deno.errors.AddrInUse) {
-      return
+      return;
     }
   }
-  console.log("GhostText Server started")
+  console.log("GhostText Server started");
   await listenAndServe({ hostname: "127.0.0.1", port: port }, async (req) => {
     if (req.method === "GET" && req.url === "/") {
       const wsServer = serve({ hostname: "127.0.0.1", port: 0 });
