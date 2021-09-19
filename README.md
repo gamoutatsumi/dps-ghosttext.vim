@@ -5,6 +5,7 @@
 ## Requirements
 
 - [denops.vim](https://github.com/vim-denops/denops.vim) is installed.
+- Deno 1.13.0 or later
 
 ## Usage
 
