@@ -1,1 +1,1 @@
-export * from "https://deno.land/x/denops_std@v1.8.1/autocmd/mod.ts";
+export * from "https://deno.land/x/denops_std@v1.11.2/autocmd/mod.ts";

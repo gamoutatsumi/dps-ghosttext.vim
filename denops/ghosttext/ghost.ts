@@ -1,8 +1,3 @@
-import {
-  isWebSocketCloseEvent,
-  WebSocket,
-  WebSocketEvent,
-} from "./vendor/https/deno.land/std/ws/mod.ts";
 import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 import * as vars from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
 import * as fn from "./vendor/https/deno.land/x/denops_std/function/mod.ts";
@@ -20,63 +15,66 @@ type GhostTextEvent = {
     start: number;
     end: number;
   }];
-} & WebSocketEvent;
+} & WebSocketEventMap;
 
-export const ghost = async (
-  denops: Denops,
+export const onClose = async (
   ws: WebSocket,
   bufHandlerMaps: BufHandlerMaps,
+  denops: Denops,
+): Promise<void> => {
+  const bufnr = bufHandlerMaps.splice(
+    bufHandlerMaps.findIndex((handler) => handler.socket === ws),
+    1,
+  )[0].bufnr;
+  await autocmd.remove(
+    denops,
+    ["TextChanged", "TextChangedP", "TextChangedI"],
+    "*",
+    { group: "dps_ghost" },
+  );
+  await helper.execute(denops, `bwipeout! ${bufnr}`);
+};
+
+export const onOpen = async (
+  ws: WebSocket,
+  event: MessageEvent,
+  bufHandlerMaps: BufHandlerMaps,
+  denops: Denops,
 ): Promise<void> => {
   const ftmap: FileTypeMap = await vars.g.get(
     denops,
     "dps_ghosttext#ftmap",
   ) as FileTypeMap;
-  for await (const event of ws) {
-    if (isWebSocketCloseEvent(event)) {
-      const bufnr = bufHandlerMaps.splice(
-        bufHandlerMaps.findIndex((handler) => handler.socket === ws),
-        1,
-      )[0].bufnr;
-      await autocmd.remove(
-        denops,
-        ["TextChanged", "TextChangedP", "TextChangedI"],
-        "*",
-        { group: "dps_ghost" },
-      );
-      await helper.execute(denops, `bwipeout ${bufnr}`);
-      break;
-    }
-    const data = JSON.parse(event.toString()) as GhostTextEvent;
-    const bufnr = await fn.bufadd(denops, data.url);
-    await fn.bufload(denops, bufnr);
-    await fn.setbufline(denops, bufnr, 1, data.text.split("\n"));
-    await helper.execute(denops, `buffer ${bufnr}`);
-    await helper.execute(
-      denops,
-      `
+  const data = JSON.parse(event.data) as GhostTextEvent;
+  const bufnr = await fn.bufadd(denops, data.url);
+  await fn.bufload(denops, bufnr);
+  await fn.setbufline(denops, bufnr, 1, data.text.split("\n"));
+  await helper.execute(denops, `buffer ${bufnr}`);
+  await helper.execute(
+    denops,
+    `
       setlocal buftype=nofile
       setlocal nobackup noswapfile
       setlocal buflisted
     `,
+  );
+  if (data.url in ftmap) {
+    await helper.execute(
+      denops,
+      `setlocal ft=${ftmap[data.url]}`,
     );
-    if (data.url in ftmap) {
-      await helper.execute(
-        denops,
-        `setlocal ft=${ftmap[data.url]}`,
-      );
-    } else {
-      await helper.execute(
-        denops,
-        `setlocal ft=text`,
-      );
-    }
-    bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
-    await autocmd.group(denops, "dps_ghost", (helper) => {
-      helper.define(
-        ["TextChanged", "TextChangedI", "TextChangedP"],
-        "<buffer>",
-        `call denops#notify("${denops.name}", "push", [${bufnr}])`,
-      );
-    });
+  } else {
+    await helper.execute(
+      denops,
+      `setlocal ft=text`,
+    );
   }
+  bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
+  await autocmd.group(denops, "dps_ghost", (helper) => {
+    helper.define(
+      ["TextChanged", "TextChangedI", "TextChangedP"],
+      "<buffer>",
+      `call denops#notify("${denops.name}", "push", [${bufnr}])`,
+    );
+  });
 };

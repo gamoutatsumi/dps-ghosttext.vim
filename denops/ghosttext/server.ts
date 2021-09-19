@@ -1,16 +1,6 @@
-import {
-  acceptable,
-  acceptWebSocket,
-} from "./vendor/https/deno.land/std/ws/mod.ts";
-
-import {
-  listenAndServe,
-  serve,
-} from "./vendor/https/deno.land/std/http/mod.ts";
-
 import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 
-import { ghost } from "./ghost.ts";
+import { onClose, onOpen } from "./ghost.ts";
 
 import { BufHandlerMaps } from "./types.ts";
 
@@ -27,36 +17,65 @@ export const runServer = async (
     listener.close();
   } catch (error) {
     if (error instanceof Deno.errors.AddrInUse) {
+      console.error("GhostText Server already started");
       return;
     }
   }
+  const wsServer = Deno.listen({ hostname: "127.0.0.1", port: 0 });
+  // @ts-ignore: type is not exposed
+  runHttpServer(port, wsServer.addr.port);
+  runWsServer(wsServer, denops, bufHandlerMaps);
   console.log("GhostText Server started");
-  await listenAndServe({ hostname: "127.0.0.1", port: port }, async (req) => {
-    if (req.method === "GET" && req.url === "/") {
-      const wsServer = serve({ hostname: "127.0.0.1", port: 0 });
-      await req.respond({
-        status: 200,
-        body: JSON.stringify({
-          // @ts-ignore: type is not defined
-          WebSocketPort: wsServer.listener.addr.port,
-          ProtocolVersion: 1,
-        }),
-        headers: new Headers({
-          "content-type": "application/json",
-        }),
-      });
-      for await (const req of wsServer) {
-        if (req.method === "GET" && req.url === "/" && acceptable(req)) {
-          await acceptWebSocket({
-            conn: req.conn,
-            bufReader: req.r,
-            bufWriter: req.w,
-            headers: req.headers,
-          }).then(async (ws) => {
-            await ghost(denops, ws, bufHandlerMaps);
-          });
-        }
+};
+
+async function runHttpServer(port: number, wsPort: number): Promise<void> {
+  for await (const conn of Deno.listen({ hostname: "127.0.0.1", port: port })) {
+    for await (const { request, respondWith } of Deno.serveHttp(conn)) {
+      if (request.method === "GET" && new URL(request.url).pathname === "/") {
+        respondWith(
+          new Response(
+            JSON.stringify({
+              WebSocketPort: wsPort,
+              ProtocolVersion: 1,
+            }),
+            {
+              status: 200,
+              headers: new Headers({
+                "content-type": "application/json",
+              }),
+            },
+          ),
+        );
       }
     }
-  });
-};
+  }
+}
+
+async function runWsServer(
+  listener: Deno.Listener,
+  denops: Denops,
+  bufHandlerMaps: BufHandlerMaps,
+): Promise<void> {
+  for await (const conn of listener) {
+    (async () => {
+      for await (const e of Deno.serveHttp(conn)) {
+        e.respondWith(await websocketHandle(denops, e.request, bufHandlerMaps));
+      }
+    })();
+  }
+}
+
+async function websocketHandle(
+  denops: Denops,
+  req: Request,
+  bufHandlerMaps: BufHandlerMaps,
+): Promise<Response> {
+  if (req.headers.get("upgrade") !== "websocket") {
+    return new Response("not trying to upgrade as websocket.");
+  }
+  const { socket, response } = Deno.upgradeWebSocket(req);
+  socket.onclose = async () => await onClose(socket, bufHandlerMaps, denops);
+  socket.onmessage = async (e) =>
+    await onOpen(socket, e, bufHandlerMaps, denops);
+  return response;
+}
