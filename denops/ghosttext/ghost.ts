@@ -51,13 +51,13 @@ export const onOpen = async (
   await fn.bufload(denops, bufnr);
   await fn.setbufline(denops, bufnr, 1, data.text.split("\n"));
   await helper.execute(denops, `buffer ${bufnr}`);
-  await opts.buftype.setLocal(denops, "nofile")
-  await opts.swapfile.setLocal(denops, false)
-  await opts.buflisted.setLocal(denops, true)
+  await opts.buftype.setLocal(denops, "nofile");
+  await opts.swapfile.setLocal(denops, false);
+  await opts.buflisted.setLocal(denops, true);
   if (data.url in ftmap) {
-    await opts.filetype.setLocal(denops, ftmap[data.url])
+    await opts.filetype.setLocal(denops, ftmap[data.url]);
   } else {
-    await opts.filetype.setLocal(denops, "text")
+    await opts.filetype.setLocal(denops, "text");
   }
   bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
   await autocmd.group(denops, "dps_ghost", (helper) => {
