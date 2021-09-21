@@ -1,6 +1,7 @@
 import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 import { runServer } from "./server.ts";
 import * as fn from "./vendor/https/deno.land/x/denops_std/function/mod.ts";
+import { ensureNumber } from "./vendor/https/deno.land/x/unknownutil/mod.ts";
 import { BufHandlerMaps } from "./types.ts";
 
 const bufHandlerMaps: BufHandlerMaps = [];
@@ -11,8 +12,8 @@ export function main(denops: Denops): Promise<void> {
       runServer(denops, bufHandlerMaps);
       return Promise.resolve();
     },
-    async push(arg: unknown): Promise<void> {
-      const bufnr = arg as number;
+    async push(bufnr: unknown): Promise<void> {
+      ensureNumber(bufnr);
       const socket =
         bufHandlerMaps.filter((handler) => handler.bufnr === bufnr)[0].socket;
       const selectPos = {
@@ -25,6 +26,12 @@ export function main(denops: Denops): Promise<void> {
         selections: selectPos,
       };
       socket.send(JSON.stringify(data));
+    },
+    async close(bufnr: unknown): Promise<void> {
+      ensureNumber(bufnr);
+      const socket =
+        bufHandlerMaps.filter((handler) => handler.bufnr === bufnr)[0].socket;
+      socket.close();
     },
   };
   return Promise.resolve();

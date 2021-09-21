@@ -59,17 +59,17 @@ async function runWsServer(
   for await (const conn of listener) {
     (async () => {
       for await (const e of Deno.serveHttp(conn)) {
-        e.respondWith(await websocketHandle(denops, e.request, bufHandlerMaps));
+        e.respondWith(websocketHandle(denops, e.request, bufHandlerMaps));
       }
     })();
   }
 }
 
-async function websocketHandle(
+function websocketHandle(
   denops: Denops,
   req: Request,
   bufHandlerMaps: BufHandlerMaps,
-): Promise<Response> {
+): Response {
   if (req.headers.get("upgrade") !== "websocket") {
     return new Response("not trying to upgrade as websocket.");
   }

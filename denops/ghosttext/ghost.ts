@@ -26,12 +26,13 @@ export const onClose = async (
   const bufnr = bufHandlerMaps.splice(
     bufHandlerMaps.findIndex((handler) => handler.socket === ws),
     1,
-  )[0].bufnr;
+  )[0]?.bufnr;
+  if (bufnr == null) return;
   await autocmd.remove(
     denops,
-    ["TextChanged", "TextChangedP", "TextChangedI"],
-    "*",
-    { group: "dps_ghost" },
+    ["BufLeave"],
+    "<buffer>",
+    { group: "dps-ghost" },
   );
   await helper.execute(denops, `bwipeout! ${bufnr}`);
 };
@@ -60,11 +61,18 @@ export const onOpen = async (
     await opts.filetype.setLocal(denops, "text");
   }
   bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
-  await autocmd.group(denops, "dps_ghost", (helper) => {
+  await autocmd.group(denops, "dps-ghost", (helper) => {
     helper.define(
       ["TextChanged", "TextChangedI", "TextChangedP"],
       "<buffer>",
       `call denops#notify("${denops.name}", "push", [${bufnr}])`,
+    );
+  });
+  await autocmd.group(denops, "dps-ghost", (helper) => {
+    helper.define(
+      ["BufLeave"],
+      "<buffer>",
+      `call denops#notify("${denops.name}", "close", [${bufnr}])`,
     );
   });
 };
