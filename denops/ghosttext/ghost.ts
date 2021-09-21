@@ -1,6 +1,7 @@
 import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
 import * as vars from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
 import * as fn from "./vendor/https/deno.land/x/denops_std/function/mod.ts";
+import * as opts from "./vendor/https/deno.land/x/denops_std/option/mod.ts";
 import * as helper from "./vendor/https/deno.land/x/denops_std/helper/mod.ts";
 import * as autocmd from "./vendor/https/deno.land/x/denops_std/autocmd/mod.ts";
 
@@ -50,24 +51,13 @@ export const onOpen = async (
   await fn.bufload(denops, bufnr);
   await fn.setbufline(denops, bufnr, 1, data.text.split("\n"));
   await helper.execute(denops, `buffer ${bufnr}`);
-  await helper.execute(
-    denops,
-    `
-      setlocal buftype=nofile
-      setlocal nobackup noswapfile
-      setlocal buflisted
-    `,
-  );
+  await opts.buftype.setLocal(denops, "nofile")
+  await opts.swapfile.setLocal(denops, false)
+  await opts.buflisted.setLocal(denops, true)
   if (data.url in ftmap) {
-    await helper.execute(
-      denops,
-      `setlocal ft=${ftmap[data.url]}`,
-    );
+    await opts.filetype.setLocal(denops, ftmap[data.url])
   } else {
-    await helper.execute(
-      denops,
-      `setlocal ft=text`,
-    );
+    await opts.filetype.setLocal(denops, "text")
   }
   bufHandlerMaps.push({ bufnr: bufnr, socket: ws });
   await autocmd.group(denops, "dps_ghost", (helper) => {

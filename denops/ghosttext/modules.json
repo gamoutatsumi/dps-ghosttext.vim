@@ -6,7 +6,8 @@
       "/helper/mod.ts",
       "/variable/mod.ts",
       "/autocmd/mod.ts",
-      "/function/mod.ts"
+      "/function/mod.ts",
+      "/option/mod.ts"
     ]
   },
   "https://deno.land/x/unknownutil": {
