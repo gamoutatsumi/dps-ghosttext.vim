@@ -28,13 +28,9 @@ export const onClose = async (
     1,
   )[0]?.bufnr;
   if (bufnr == null) return;
-  await autocmd.remove(
-    denops,
-    ["BufLeave"],
-    "<buffer>",
-    { group: "dps-ghost" },
-  );
-  await helper.execute(denops, `bwipeout! ${bufnr}`);
+  if (await fn.bufexists(denops, bufnr)) {
+    await helper.execute(denops, `bwipeout! ${bufnr}`);
+  }
 };
 
 export const onOpen = async (
@@ -70,7 +66,7 @@ export const onOpen = async (
   });
   await autocmd.group(denops, "dps-ghost", (helper) => {
     helper.define(
-      ["BufLeave"],
+      ["BufDelete"],
       "<buffer>",
       `call denops#notify("${denops.name}", "close", [${bufnr}])`,
     );
