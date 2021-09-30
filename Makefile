@@ -1,11 +1,12 @@
 TOOLS := ${CURDIR}/.tools
+SOURCEDIR := ${CURDIR}/denops/ghosttext
 
 tools: FORCE
 	@mkdir -p ${TOOLS}
 	@deno install --allow-write --allow-read --allow-net --root ${TOOLS} https://deno.land/x/dlink/dlink.ts
 
 dlink: FORCE
-	@cd denops/ghosttext; ${TOOLS}/bin/dlink
+	@cd ${SOURCEDIR}; ${TOOLS}/bin/dlink
 	@make fmt
 	@make cache
 
@@ -22,6 +23,6 @@ type-check: FORCE
 	@deno test --unstable --no-run $$(find . -name '*.ts')
 
 cache: FORCE
-	@deno cache --unstable $$(find ./denops/ghosttext/vendor -name '*.ts')
+	@deno cache --unstable $$(find ${SOURCEDIR}/vendor -name '*.ts')
 
 FORCE:
