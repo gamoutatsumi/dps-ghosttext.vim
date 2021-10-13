@@ -27,11 +27,12 @@ export function main(denops: Denops): Promise<void> {
       };
       socket.send(JSON.stringify(data));
     },
-    async close(bufnr: unknown): Promise<void> {
+    close(bufnr: unknown): Promise<void> {
       ensureNumber(bufnr);
       const socket =
         bufHandlerMaps.filter((handler) => handler.bufnr === bufnr)[0].socket;
       socket.close();
+      return Promise.resolve();
     },
   };
   return Promise.resolve();
