@@ -7,9 +7,12 @@ import { BufHandlerMaps } from "./types.ts";
 const bufHandlerMaps: BufHandlerMaps = [];
 
 export function main(denops: Denops): Promise<void> {
+  let status = "stopped";
+
   denops.dispatcher = {
     run(): Promise<void> {
       runServer(denops, bufHandlerMaps);
+      status = "running";
       return Promise.resolve();
     },
     async push(bufnr: unknown): Promise<void> {
@@ -26,6 +29,9 @@ export function main(denops: Denops): Promise<void> {
         selections: selectPos,
       };
       socket.send(JSON.stringify(data));
+    },
+    status(): Promise<string> {
+      return Promise.resolve(status);
     },
     close(bufnr: unknown): Promise<void> {
       ensureNumber(bufnr);
