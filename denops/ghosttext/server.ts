@@ -1,4 +1,4 @@
-import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
+import { Denops } from "./deps.ts";
 import { onClose, onOpen } from "./ghost.ts";
 import { BufHandlerMaps } from "./types.ts";
 

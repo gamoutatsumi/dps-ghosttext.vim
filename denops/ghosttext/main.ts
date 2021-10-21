@@ -1,7 +1,5 @@
-import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
+import { Denops, ensureNumber, fn } from "./deps.ts";
 import { runServer } from "./server.ts";
-import * as fn from "./vendor/https/deno.land/x/denops_std/function/mod.ts";
-import { ensureNumber } from "./vendor/https/deno.land/x/unknownutil/mod.ts";
 import { BufHandlerMaps } from "./types.ts";
 
 const bufHandlerMaps: BufHandlerMaps = [];

@@ -1,28 +1,33 @@
 TOOLS := ${CURDIR}/.tools
-SOURCEDIR := ${CURDIR}/denops/ghosttext
 
-tools: FORCE
+.DEFAULT_GOAL := help
+
+help:
+	@cat $(MAKEFILE_LIST) | \
+	    perl -ne 'print if /^\w+.*##/;' | \
+	    perl -pe 's/(.*):.*##\s*/sprintf("%-20s",$$1)/eg;'
+
+tools: FORCE	## Install development tools
 	@mkdir -p ${TOOLS}
-	@deno install --allow-write --allow-read --allow-net --root ${TOOLS} https://deno.land/x/dlink/dlink.ts
+	@deno install -A -f -n udd --root ${TOOLS} https://deno.land/x/udd@0.5.0/main.ts
 
-dlink: FORCE
-	@cd ${SOURCEDIR}; ${TOOLS}/bin/dlink
+fmt: FORCE	## Format code
+	@deno fmt --ignore=.deno
+
+fmt-check: FORCE	## Format check
+	@deno fmt --check --ignore=.deno
+
+lint: FORCE	## Lint code
+	@deno lint --ignore=.deno
+
+type-check: FORCE	## Type check
+	@deno test --unstable --no-run $$(find . -name '*.ts' -not -name '.deno')
+
+test: FORCE	## Test
+	@deno test --unstable -A --no-check --jobs
+
+update: FORCE	## Update dependencies
+	@${TOOLS}/bin/udd $$(find . -name '*.ts' -not -name '.deno')
 	@make fmt
-	@make cache
-
-lint: FORCE
-	@deno lint
-
-fmt: FORCE
-	@deno fmt
-
-fmt-check: FORCE
-	@deno fmt --check
-
-type-check: FORCE
-	@deno test --unstable --no-run $$(find . -name '*.ts')
-
-cache: FORCE
-	@deno cache --unstable $$(find ${SOURCEDIR}/vendor -name '*.ts')
 
 FORCE:

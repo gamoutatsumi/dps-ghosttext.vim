@@ -1,9 +1,4 @@
-import { Denops } from "./vendor/https/deno.land/x/denops_std/mod.ts";
-import * as vars from "./vendor/https/deno.land/x/denops_std/variable/mod.ts";
-import * as fn from "./vendor/https/deno.land/x/denops_std/function/mod.ts";
-import * as opts from "./vendor/https/deno.land/x/denops_std/option/mod.ts";
-import * as helper from "./vendor/https/deno.land/x/denops_std/helper/mod.ts";
-import * as autocmd from "./vendor/https/deno.land/x/denops_std/autocmd/mod.ts";
+import { autocmd, Denops, fn, helper, opts, vars } from "./deps.ts";
 
 import { BufHandlerMaps, FileTypeMap } from "./types.ts";
 
