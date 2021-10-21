@@ -31,20 +31,18 @@ async function runHttpServer(port: number, wsPort: number): Promise<void> {
   for await (const conn of Deno.listen({ hostname: "127.0.0.1", port: port })) {
     for await (const { request, respondWith } of Deno.serveHttp(conn)) {
       if (request.method === "GET" && new URL(request.url).pathname === "/") {
-        respondWith(
-          new Response(
-            JSON.stringify({
-              WebSocketPort: wsPort,
-              ProtocolVersion: 1,
-            }),
-            {
-              status: 200,
-              headers: new Headers({
-                "content-type": "application/json",
-              }),
-            },
-          ),
-        );
+        const body = JSON.stringify({
+          WebSocketPort: wsPort,
+          ProtocolVersion: 1,
+        });
+        const headers = {
+          status: 200,
+          headers: new Headers({
+            "content-type": "application/json",
+          }),
+        };
+        const res = new Response(body, headers);
+        respondWith(res);
       }
     }
   }
