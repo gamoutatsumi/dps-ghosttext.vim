@@ -38,3 +38,11 @@ autocmd User DenopsPluginPost:ghosttext let g:dps_ghosttext#init = v:true
 if g:dps_ghosttext#enable_autostart
   autocmd User DenopsPluginPost:ghosttext call denops#notify("ghosttext", "run", [])
 endif
+
+function! ghosttext#status() abort
+  if get(g:, 'dps_ghosttext#init', v:false)
+    return denops#request("ghosttext", "status", [])
+  else
+    return ''
+  endif
+endfunction
