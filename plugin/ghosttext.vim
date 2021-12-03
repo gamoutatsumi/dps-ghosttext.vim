@@ -4,9 +4,7 @@ endif
 let g:loaded_ghosttext = v:true
 
 function s:start() abort
-  while !get(g:, 'dps_ghosttext#init', v:false)
-    sleep 1m
-  endwhile
+  call denops#plugin#wait('ghosttext')
   return denops#notify("ghosttext", "run", [])
 endfunction
 
