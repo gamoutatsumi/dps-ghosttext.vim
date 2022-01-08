@@ -1,5 +1,7 @@
 # dps-ghosttext.vim
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 [GhostText](https://ghosttext.fregante.com) plugin for denops.vim
 
 ## Requirements
