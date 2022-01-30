@@ -6,12 +6,12 @@
 
 ## Requirements
 
-- [denops.vim](https://github.com/vim-denops/denops.vim) is installed.
-- Deno 1.13.0 or later
+- [denops.vim](https://github.com/vim-denops/denops.vim) version 3.0 or later.
+- Deno 1.17.1 or later
 
 ## Usage
 
-In default, autostart GhostText server.
+In the default, autostart GhostText server.
 
 Manually: `:GhostStart`
 

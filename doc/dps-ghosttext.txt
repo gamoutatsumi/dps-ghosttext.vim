@@ -51,12 +51,15 @@ g:dps_ghosttext#enable_autostart		*g:dps_ghosttext#enable_autostart*
 COMMAND                        			*dps-ghosttext-command*
 
 :GhostStart			                *:GhostStart*
-  Startup GhostText server using number of {port}. Default {port} is 4001.
+  Start GhostText server.
 
 -----------------------------------------------------------------------------
 FUNCTION					*dps-ghosttext-function*
 
 ghosttext#status				*ghosttext#status*
-  returns server status. "running" or "stopped".
+  Returns server status. "running" or "stopped".
+
+ghosttext#start					*ghosttext#start*
+  Start GhostText server.
 
 vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:
