@@ -1,4 +1,4 @@
-import { assertNumber, Denops, fn } from "./deps.ts";
+import { assert, Denops, fn, is } from "./deps.ts";
 import { runServer } from "./server.ts";
 import { BufHandlerMaps } from "./types.ts";
 
@@ -14,7 +14,7 @@ export function main(denops: Denops): Promise<void> {
       return Promise.resolve();
     },
     async push(bufnr: unknown): Promise<void> {
-      assertNumber(bufnr);
+      assert(bufnr, is.Number);
       const socket =
         bufHandlerMaps.filter((handler) => handler.bufnr === bufnr)[0].socket;
       const selectPos = {
@@ -32,7 +32,7 @@ export function main(denops: Denops): Promise<void> {
       return Promise.resolve(status);
     },
     close(bufnr: unknown): Promise<void> {
-      assertNumber(bufnr);
+      assert(bufnr, is.Number);
       const socket =
         bufHandlerMaps.filter((handler) => handler.bufnr === bufnr)[0].socket;
       socket.close();
