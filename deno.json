@@ -1,22 +1,18 @@
 {
   "tasks": {
-    "type:check": "deno test --unstable --no-run $(find . -name '*.ts' -not -name '.deno')",
+    "lint": "deno lint && deno check ./**/*.ts",
     "udd": "deno run -A https://deno.land/x/udd/main.ts $(find . -name '*.ts' -not -name '.deno')"
   },
   "fmt": {
-    "files": {
-      "exclude": [
-        ".deno",
-        ".git"
-      ]
-    }
+    "exclude": [
+      ".deno",
+      ".git"
+    ]
   },
   "lint": {
-    "files": {
-      "exclude": [
-        ".deno",
-        ".git"
-      ]
-    }
+    "exclude": [
+      ".deno",
+      ".git"
+    ]
   }
 }
