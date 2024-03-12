@@ -6,8 +6,8 @@
 
 ## Requirements
 
-- [denops.vim](https://github.com/vim-denops/denops.vim) version 3.0 or later.
-- Deno 1.17.1 or later
+- [denops.vim](https://github.com/vim-denops/denops.vim) version 6.0 or later.
+- Deno 1.38.5 or later
 
 ## Usage
 
