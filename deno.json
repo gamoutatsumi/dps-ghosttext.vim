@@ -2,7 +2,7 @@
   "lock": false,
   "tasks": {
     "lint": "deno lint && deno check ./**/*.ts",
-    "molt": "deno run --allow-env --allow-read --allow-write=. --allow-run=git,deno --allow-net=deno.land https://deno.land/x/molt@0.17.2/cli.ts ./**/*.ts --write"
+    "molt": "deno run --allow-env --allow-read --allow-write --allow-run=git,deno --allow-net jsr:@molt/cli ./**/*.ts --write"
   },
   "fmt": {
     "exclude": [
