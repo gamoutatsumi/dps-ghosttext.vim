@@ -1,7 +1,7 @@
-export type { Denops } from "https://deno.land/x/denops_std@v6.5.0/mod.ts";
-export * as vars from "https://deno.land/x/denops_std@v6.5.0/variable/mod.ts";
-export * as helper from "https://deno.land/x/denops_std@v6.5.0/helper/mod.ts";
-export * as autocmd from "https://deno.land/x/denops_std@v6.5.0/autocmd/mod.ts";
-export * as fn from "https://deno.land/x/denops_std@v6.5.0/function/mod.ts";
-export * as opts from "https://deno.land/x/denops_std@v6.5.0/option/mod.ts";
+export type { Denops } from "jsr:@denops/std@7.0.0";
+export * as vars from "jsr:@denops/std@7.0.0/variable";
+export * as helper from "jsr:@denops/std@7.0.0/helper";
+export * as autocmd from "jsr:@denops/std@7.0.0/autocmd";
+export * as fn from "jsr:@denops/std@7.0.0/function";
+export * as opts from "jsr:@denops/std@7.0.0/option";
 export { assert, is } from "jsr:@core/unknownutil@3.18.1";
