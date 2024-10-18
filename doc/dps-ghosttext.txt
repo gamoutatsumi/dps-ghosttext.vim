@@ -23,7 +23,7 @@ INSTALL						*dps-ghosttext-install*
 
 Please install both Deno and "denops.vim".
 
-https://deno.land/
+https://deno.com/
 https://github.com/vim-denops/denops.vim
 
 =============================================================================
