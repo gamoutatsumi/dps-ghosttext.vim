@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "@denops/std": "jsr:@denops/std@8.1.0",
+    "@denops/variable": "jsr:@denops/std@8.1.0/variable",
+    "@denops/helper": "jsr:@denops/std@8.1.0/helper",
+    "@denops/autocmd": "jsr:@denops/std@8.1.0/autocmd",
+    "@denops/function": "jsr:@denops/std@8.1.0/function",
+    "@denops/option": "jsr:@denops/std@8.1.0/option",
+    "@unknownutil": "jsr:@core/unknownutil@4.3.0"
+  }
+}

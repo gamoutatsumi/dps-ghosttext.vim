@@ -1,4 +1,9 @@
-import { autocmd, Denops, fn, helper, opts, vars } from "./deps.ts";
+import * as autocmd from "@denops/autocmd";
+import type { Denops } from "@denops/std";
+import * as fn from "@denops/function";
+import * as helper from "@denops/helper";
+import * as opts from "@denops/option";
+import * as vars from "@denops/variable";
 
 import { BufHandlerMaps, FileTypeMap } from "./types.ts";
 

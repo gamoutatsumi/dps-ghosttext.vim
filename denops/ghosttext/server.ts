@@ -1,4 +1,4 @@
-import { Denops } from "./deps.ts";
+import type { Denops } from "@denops/std";
 import { onClose, onOpen } from "./ghost.ts";
 import { BufHandlerMaps } from "./types.ts";
 
