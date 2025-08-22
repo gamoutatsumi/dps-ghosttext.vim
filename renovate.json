@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "platformAutomerge": true,
+  "platformCommit": "enabled",
+  "configMigration": true,
+  "automergeType": "pr",
+  "extends": [
+    "config:recommended",
+    ":gitSignOff",
+    ":separateMajorReleases",
+    "github>Omochice/renovate-config:deno"
+  ],
+  "automerge": true,
+  "automergeStrategy": "merge-commit",
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 5,
+  "timezone": "Asia/Tokyo",
+  "github-actions": {
+    "enabled": true
+  }
+}
