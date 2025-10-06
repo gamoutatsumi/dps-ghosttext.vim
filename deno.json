@@ -15,5 +15,8 @@
       ".deno",
       ".git"
     ]
-  }
+  },
+  "workspace": [
+    "./denops/ghosttext"
+  ]
 }

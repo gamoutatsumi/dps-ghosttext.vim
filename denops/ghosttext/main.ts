@@ -1,6 +1,8 @@
-import { assert, Denops, fn, is } from "./deps.ts";
 import { runServer } from "./server.ts";
 import { BufHandlerMaps } from "./types.ts";
+import type { Denops } from "@denops/std";
+import * as fn from "@denops/function";
+import { assert, is } from "@unknownutil";
 
 const bufHandlerMaps: BufHandlerMaps = [];
 
