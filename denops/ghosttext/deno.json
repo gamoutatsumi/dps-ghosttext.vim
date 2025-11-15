@@ -1,11 +1,11 @@
 {
   "imports": {
-    "@denops/std": "jsr:@denops/std@8.1.1",
-    "@denops/variable": "jsr:@denops/std@8.1.1/variable",
-    "@denops/helper": "jsr:@denops/std@8.1.1/helper",
-    "@denops/autocmd": "jsr:@denops/std@8.1.1/autocmd",
-    "@denops/function": "jsr:@denops/std@8.1.1/function",
-    "@denops/option": "jsr:@denops/std@8.1.1/option",
+    "@denops/std": "jsr:@denops/std@8.2.0",
+    "@denops/variable": "jsr:@denops/std@8.2.0/variable",
+    "@denops/helper": "jsr:@denops/std@8.2.0/helper",
+    "@denops/autocmd": "jsr:@denops/std@8.2.0/autocmd",
+    "@denops/function": "jsr:@denops/std@8.2.0/function",
+    "@denops/option": "jsr:@denops/std@8.2.0/option",
     "@unknownutil": "jsr:@core/unknownutil@4.3.0"
   }
 }
